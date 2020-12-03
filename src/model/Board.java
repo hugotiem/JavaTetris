@@ -7,10 +7,7 @@ import factory.RawMaterial;
 import save.Storage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Board {
 
@@ -129,32 +126,83 @@ public class Board {
      */
     public int eval (){
         int [][] matrix = this.toMatrix();
-        return this.getMaxArea(matrix);
+        return this.areaMax(matrix);
     }
+
+    public int areaMax(int[][] matrix) {
+        int nbLine = matrix.length;
+        int nbColumn = matrix[0].length;
+        int[][] height = new int[nbLine][nbColumn + 1];
+        int areaMax = 0;
+        for (int i = 0; i < nbLine; i++) {
+            for (int j = 0; j < nbColumn; j++) {
+                if (matrix[i][j] == 0) {
+                    height[i][j] = 0;
+                } else {
+                    if (i == 0) {
+                        height[i][j] = 1;
+                    } else {
+                        height[i][j] = height[i - 1][j] + 1;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < nbLine; i++) {
+            int area = maxAreaHeight(height[i]);
+            if (area > areaMax) {
+                areaMax = area;
+            }
+        }
+        return areaMax;
+    }
+
+    private int maxAreaHeight(int[] columnSize) {
+        Stack<Integer> stack = new Stack<>();
+        int lineSize = 0;
+        int maximum = 0;
+
+        while (lineSize < columnSize.length) {
+            if (stack.isEmpty() || columnSize[stack.peek()] <= columnSize[lineSize]) {
+                stack.push(lineSize);
+                lineSize++;
+            } else {
+                int area;
+                int x = stack.pop();
+                if (stack.isEmpty()) {
+                    area = columnSize[x] * lineSize;
+                } else {
+                    area = columnSize[x] * (lineSize - stack.peek() - 1);
+                }
+                maximum = Math.max(maximum, area);
+            }
+        }
+        return maximum;
+    }
+
 
     /**
      * RENVOIE L'AIRE LA PLUS GRANDE PARMIS TOUS LES RECTANGLES DE LA GRILLE
      * @param matrix une representation matricielle de la grille
      * @return l'aire max entre tous les rectangles
      */
-    private int getMaxArea(int[][] matrix){
-        int max = 0;
-
-        for (int i = 0; i < this.nbRow; i++){
-            for (int j = 0; j < this.nbCol; j++){
-                if(j + 1 < this.nbCol) {
-                    if (matrix[i][j] == 1) {
-                        int area = this.getDim(matrix, i, j);
-                        /*int area = this.getArea(dim);*/
-                        if (area > max)
-                            max = area;
-
-                    }
-                }
-            }
-        }
-        return max;
-    }
+//    private int getMaxArea(int[][] matrix){
+//        int max = 0;
+//
+//        for (int i = 0; i < this.nbRow; i++){
+//            for (int j = 0; j < this.nbCol; j++){
+//                if(j + 1 < this.nbCol) {
+//                    if (matrix[i][j] == 1) {
+//                        int area = this.getDim(matrix, i, j);
+//                        /*int area = this.getArea(dim);*/
+//                        if (area > max)
+//                            max = area;
+//
+//                    }
+//                }
+//            }
+//        }
+//        return max;
+//    }
 
     /**
      * RENVOIE LES DIMENSIONS D UN RECTANGLE DEPUIS LE POINT [i, j]
@@ -163,56 +211,83 @@ public class Board {
      * @param j l'index colonne de depart
      * @return la plus grande aire trouvee a partir du point
      */
-    private int getDim(int[][] matrix, int i, int j){
-        int longueur = 1;
-        int largeur = 1;
-
-        int area = 0;
-
-        while (matrix[i][j + longueur] != 0)
-            longueur++;
-
-        HashMap<Integer, Integer> recs = new HashMap<>();
-        ArrayList<Integer> keysToRemove = new ArrayList<>();
-
-        while (matrix[i + largeur][j] != 0){
-            recs.put(largeur + 1, 1);
-            largeur++;
-        }
-
-        largeur = 1;
-
-        for (int k = 1; k < longueur; k++){
-            while (matrix[i + largeur][j+k] != 0)
-                largeur++;
-
-            for (Map.Entry<Integer, Integer> rec: recs.entrySet()){
-                if(rec.getKey() <= largeur)
-                    rec.setValue(rec.getValue() + 1);
-                else
-                    keysToRemove.add(rec.getKey());
-            }
-            for (int l: keysToRemove){
-                int a = this.getArea(new int[]{l, recs.get(l)});
-                if(a > area)
-                    area = a;
-                recs.remove(l);
-            }
-            if(!recs.containsKey(largeur))
-                recs.put(largeur, 1);
-
-            keysToRemove = new ArrayList<>();
-            largeur = 1;
-        }
-
-        for (Map.Entry<Integer, Integer> rec: recs.entrySet()){
-            int a = this.getArea(new int[]{rec.getKey(), rec.getValue()});
-            if (a > area)
-                area = a;
-        }
-
-        return area;
-    }
+//    private int getDim(int[][] matrix, int i, int j){
+//        int longueur = 1;
+//        int largeur = 1;
+//
+//        int area = 0;
+//
+//        boolean stop = false;
+//
+//        while (!stop) {
+//            if((j + longueur) < this.nbCol) {
+//                if (matrix[i][j + longueur] != 0)
+//                    longueur++;
+//                else
+//                    stop = true;
+//            } else
+//                stop = true;
+//        }
+//        stop = false;
+//
+//        HashMap<Integer, Integer> recs = new HashMap<>();
+//        ArrayList<Integer> keysToRemove = new ArrayList<>();
+//
+//        while (!stop){
+//            if((i + largeur) < this.nbRow) {
+//                if (matrix[i + largeur][j] != 0) {
+//                    recs.put(largeur + 1, 1);
+//                    largeur++;
+//                }
+//                else
+//                    stop = true;
+//            } else
+//                stop = true;
+//        }
+//
+//        stop = false;
+//        largeur = 1;
+//
+//        for (int k = 1; k < longueur; k++){
+//            while (!stop){
+//                if((i + largeur) < this.nbRow) {
+//                    if (matrix[i + largeur][j+k] != 0) {
+//                        recs.put(largeur + 1, 1);
+//                        largeur++;
+//                    }
+//                    else
+//                        stop = true;
+//                } else
+//                    stop = true;
+//            }
+//
+//            for (Map.Entry<Integer, Integer> rec: recs.entrySet()){
+//                if(rec.getKey() <= largeur)
+//                    rec.setValue(rec.getValue() + 1);
+//                else
+//                    keysToRemove.add(rec.getKey());
+//            }
+//            for (int l: keysToRemove){
+//                int a = this.getArea(new int[]{l, recs.get(l)});
+//                if(a > area)
+//                    area = a;
+//                recs.remove(l);
+//            }
+//            if(!recs.containsKey(largeur))
+//                recs.put(largeur, 1);
+//
+//            keysToRemove = new ArrayList<>();
+//            largeur = 1;
+//        }
+//
+//        for (Map.Entry<Integer, Integer> rec: recs.entrySet()){
+//            int a = this.getArea(new int[]{rec.getKey(), rec.getValue()});
+//            if (a > area)
+//                area = a;
+//        }
+//
+//        return area;
+//    }
 
     /**
      * RENVOIE L'AIRE D'UN RECTANGE DE DIMENSIONS dim
