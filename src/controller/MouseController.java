@@ -1,9 +1,13 @@
 package controller;
 
 import model.Board;
+import model.Move;
+import model.MoveAndScore;
 import model.Piece;
 import save.Storage;
+import solver.Solver;
 import view.SavesView;
+import view.ViewComponents;
 import view.ViewFrame;
 
 import java.awt.*;
@@ -51,6 +55,12 @@ public class MouseController implements MouseListener {
             }
             if (val.equals("charge")){
                 SavesView sv = new SavesView(b.getPlayer(), frame);
+            }
+            if(val.equals("solver")){
+                Solver.setNbMoves(b.getCurrentMoves());
+                MoveAndScore move = Solver.solve(2, b, new MoveAndScore(new Move(null, ""), 0, 0));
+                move.getPiece().move(b, move.getTypeMove());
+                frame.setMessage(move.getTypeMove(), move.getPiece().getForm() + " " + ViewComponents.getStringColor(move.getPiece().getColor()));
             }
         }
         //System.out.println(b.getCurrentPiece());

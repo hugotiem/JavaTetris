@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public abstract class Piece {
 
     private int x;
@@ -228,10 +230,10 @@ public abstract class Piece {
      * @param b la grille du jeu
      * @param dir la direction lors du deplacement
      */
-    public void move(Board b, String dir){
+    public boolean move(Board b, String dir){
         Point current = this.getCurrentPoint(b);
         Point clone = this.point.clone();
-
+        boolean moved = true;
         // On efface la piece de la grille
         clearPiece(b, current);
 
@@ -259,11 +261,34 @@ public abstract class Piece {
 
         if(this.isCollision(b)){
             this.setPoint(clone);
+            moved = false;
         } else {
             b.initBoard();
             b.setCurrentMoves(b.getCurrentMoves() + 1);
         }
         b.putPiecesOnBoard();
+        return moved;
+    }
+
+    public ArrayList<Move> getValidMoves(Board b){
+        ArrayList<Move> validMoves = new ArrayList<>();
+        Point tmp = this.point.clone();
+        if(this.move(b, "up")){
+            validMoves.add(new Move(this, "up"));
+        }
+        if(this.move(b, "down")){
+            validMoves.add(new Move(this, "down"));
+        }
+        if(this.move(b, "left")){
+            validMoves.add(new Move(this, "left"));
+        }
+        if(this.move(b, "right")){
+            validMoves.add(new Move(this, "right"));
+        }
+        this.point = tmp;
+        b.initBoard();
+        b.putPiecesOnBoard();
+        return validMoves;
     }
 
     /**

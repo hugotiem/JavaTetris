@@ -33,6 +33,23 @@ public class ViewComponents extends JPanel {
         }
     }
 
+    public static String getStringColor(int color){
+        switch (color){
+            case 0:
+                return "jaune";
+            case 1:
+                return "bleu";
+            case 2:
+                return "rouge";
+            case 3:
+                return "vert";
+            case 4:
+                return "magenta";
+            default:
+                return null;
+        }
+    }
+
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);

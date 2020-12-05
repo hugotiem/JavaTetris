@@ -1,9 +1,8 @@
 package view;
 
-import model.Board;
-import model.Piece;
-import model.Point;
+import model.*;
 import save.Storage;
+import solver.Solver;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,6 +54,7 @@ public class ConsoleView implements ViewMethods {
             System.out.println("Nouvelle partie => new;");
             System.out.println("Sauvegarder la partie => save;");
             System.out.println("Charger une partie => charge;");
+            System.out.println("Solver => solve");
             System.out.println("Exit => exit ;");
 
             action = scan.nextLine();
@@ -94,6 +94,7 @@ public class ConsoleView implements ViewMethods {
             } else {
                 System.out.println("Le nombre de coups autorises a ete atteint !");
             }
+            //break;
         }
     }
 
@@ -116,6 +117,15 @@ public class ConsoleView implements ViewMethods {
             return true;
         }else if(action.equals("score")){
             b.setScore(b.eval());
+            return true;
+        } else if(action.equals("solve")){
+            Solver.setNbMoves(b.getCurrentMoves());
+            MoveAndScore move = Solver.solve(3, b, new MoveAndScore(new Move(null, ""), 0, 0));
+            b.setCurrentPiece(move.getPiece());
+            b.getCurrentPiece().move(b, move.getTypeMove());
+            System.out.println(move.getTypeMove());
+            System.out.println(move.getDepth());
+            System.out.println(move.getPiece());
             return true;
         }
         return false;

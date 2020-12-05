@@ -53,6 +53,10 @@ public class ViewFrame extends JFrame implements ViewMethods {
         this.message = "    Piece selectionée : " + message;
     }
 
+    public void setMessage(String message, String prefix){
+        this.message = prefix + " " + message;
+    }
+
     @Override
     public void setBoard(Board b){
         this.b = b;
@@ -100,29 +104,38 @@ public class ViewFrame extends JFrame implements ViewMethods {
         score.setFont(new Font("Arial", Font.BOLD, 25));
 
         // BUTTONS
+
+        Dimension dim  = new Dimension(180, 30);
+
         JButton displayScore = new JButton("Afficher le score");
-        displayScore.setPreferredSize(new Dimension(180, 30));
+        displayScore.setPreferredSize(dim);
         displayScore.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         displayScore.setFocusable(false);
         displayScore.addMouseListener(new MouseController(this, this.b, "score"));
 
         JButton save = new JButton("Sauvegarder la partie");
-        save.setPreferredSize(new Dimension(180, 30));
+        save.setPreferredSize(dim);
         save.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         save.setFocusable(false);
         save.addMouseListener(new MouseController(this, this.b, "save"));
 
         JButton newGame = new JButton("Nouvelle partie");
-        newGame.setPreferredSize(new Dimension(180, 30));
+        newGame.setPreferredSize(dim);
         newGame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         newGame.setFocusable(false);
         newGame.addMouseListener(new MouseController(this, this.b, "new"));
 
         JButton chargeGame = new JButton("Charger une partie");
-        chargeGame.setPreferredSize(new Dimension(180, 30));
+        chargeGame.setPreferredSize(dim);
         chargeGame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         chargeGame.setFocusable(false);
         chargeGame.addMouseListener(new MouseController(this, this.b, "charge"));
+
+        JButton solver = new JButton("Activer Solver");
+        solver.setPreferredSize(dim);
+        solver.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        solver.setFocusable(false);
+        solver.addMouseListener(new MouseController(this, this.b, "solver"));
 
         JTextArea moves = new JTextArea("nombre de deplacement(s)\n autorise(s) : " + (b.getMaxMoves() - b.getCurrentMoves()));
         moves.setEditable(false);
@@ -134,6 +147,7 @@ public class ViewFrame extends JFrame implements ViewMethods {
         toolbar.add(save);
         toolbar.add(newGame);
         toolbar.add(chargeGame);
+        toolbar.add(solver);
         toolbar.add(moves);
 
         this.getContentPane().add(content);
